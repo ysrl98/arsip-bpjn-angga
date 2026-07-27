@@ -26,7 +26,7 @@ class UserEdit extends Component
     {
         $this->validate([
             'nama_lengkap' => 'required',
-            'role' => 'required|in:admin,user',
+            'role' => 'required|in:admin,user,pimpinan',
         ]);
 
         $user = User::find($this->user_id);

@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
 
+// Route Publik Verifikasi Dokumen
+Route::get('/verifikasi/{hash}', [App\Http\Controllers\VerificationController::class, 'verify'])
+    ->name('arsip.verify');
+
 // Route Dashboard yang baru (menggunakan Livewire)
 Route::get('/dashboard', App\Livewire\Dashboard::class)
     ->middleware(['auth', 'verified'])
@@ -23,6 +27,14 @@ Route::get('/dashboard', App\Livewire\Dashboard::class)
 Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
+
+Route::get('/approval-board', App\Livewire\ApprovalBoard::class)
+    ->middleware(['auth', 'verified'])
+    ->name('approval-board');
+
+Route::get('/arsip/download/{id}', [App\Http\Controllers\DocumentDownloadController::class, 'download'])
+    ->middleware(['auth', 'verified'])
+    ->name('dokumen.download');
 
 // --- MANAJEMEN USER (KHUSUS ADMIN) ---
 Route::middleware(['auth', 'verified'])->group(function () {

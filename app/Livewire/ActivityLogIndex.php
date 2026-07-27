@@ -12,8 +12,8 @@ class ActivityLogIndex extends Component
 
     public function mount()
     {
-        // Proteksi Keras: Hanya Admin yang boleh lihat
-        if (auth()->user()->role !== 'admin') {
+        // Proteksi Keras: Hanya Admin dan Pimpinan yang boleh lihat
+        if (!in_array(auth()->user()->role, ['admin', 'pimpinan'])) {
             abort(403);
         }
     }

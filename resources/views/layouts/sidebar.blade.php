@@ -51,13 +51,15 @@
             </a>
         @endforeach
 
-        @if(auth()->user()->role === 'admin')
+        @if(in_array(auth()->user()->role, ['admin', 'pimpinan']))
             <div class="pt-6 pb-2">
                 <p class="px-4 text-xs font-bold text-blue-400 uppercase tracking-widest">
-                    Administrator
+                    {{ auth()->user()->role === 'admin' ? 'Administrator' : 'Laporan & Log' }}
                 </p>
             </div>
+        @endif
 
+        @if(auth()->user()->role === 'admin')
             <a href="{{ route('users.index') }}" 
                class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('users.*') ? 'bg-red-600 text-white shadow-lg shadow-red-600/30' : 'text-blue-100 hover:bg-red-900/50 hover:text-white' }}">
                 <svg class="w-5 h-5 mr-3 {{ request()->routeIs('users.*') ? 'text-white' : 'text-blue-300 group-hover:text-white' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -66,12 +68,24 @@
                 </svg>
                 Manajemen User
             </a>
+        @endif
+        @if(in_array(auth()->user()->role, ['admin', 'pimpinan']))
             <a href="{{ route('activity-log') }}" 
             class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('activity-log') ? 'bg-indigo-600 text-white shadow-lg' : 'text-blue-100 hover:bg-indigo-900/50 hover:text-white' }}">
                 <svg class="w-5 h-5 mr-3 {{ request()->routeIs('activity-log') ? 'text-white' : 'text-blue-300 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
                 </svg>
                 Log Aktivitas
+            </a>
+        @endif
+
+        @if(auth()->user()->role === 'pimpinan')
+            <a href="{{ route('approval-board') }}" 
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group {{ request()->routeIs('approval-board') ? 'bg-green-600 text-white shadow-lg' : 'text-blue-100 hover:bg-green-900/50 hover:text-white' }}">
+                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('approval-board') ? 'text-white' : 'text-blue-300 group-hover:text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Approval Board
             </a>
         @endif
     </nav>

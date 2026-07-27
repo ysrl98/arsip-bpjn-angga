@@ -38,6 +38,7 @@
                         <label class="block text-sm font-medium text-gray-700">Role Akses</label>
                         <select wire:model="role" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
                             <option value="user">User (Pegawai Biasa)</option>
+                            <option value="pimpinan">Pimpinan</option>
                             <option value="admin">Administrator</option>
                         </select>
                     </div>

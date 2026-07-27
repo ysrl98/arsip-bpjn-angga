@@ -1,3 +1,4 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
@@ -58,8 +59,40 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
-            <div class="bg-white shadow-sm sm:rounded-lg p-6 lg:col-span-1">
-                <h3 class="text-lg font-bold text-gray-800 mb-4">Sebaran Arsip</h3>
+            <!-- GRAFIK TREN BULANAN -->
+            <div class="bg-white shadow-sm sm:rounded-lg p-6 lg:col-span-3 border border-gray-100">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Tren Pengarsipan Bulanan</h3>
+                <div class="w-full h-64" x-data="{
+                    chartData: {{ json_encode($chart_data) }},
+                    init() {
+                        const ctx = this.$refs.canvas.getContext('2d');
+                        if (window.myChart) { window.myChart.destroy(); }
+                        window.myChart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'],
+                                datasets: [{
+                                    label: 'Jumlah Dokumen',
+                                    data: this.chartData,
+                                    backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                                    borderRadius: 4
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+                            }
+                        });
+                    }
+                }" x-effect="if (window.myChart) { window.myChart.data.datasets[0].data = {{ json_encode($chart_data) }}; window.myChart.update(); }">
+                    <canvas x-ref="canvas"></canvas>
+                </div>
+            </div>
+
+            <!-- SEBARAN ARSIP -->
+            <div class="bg-white shadow-sm sm:rounded-lg p-6 lg:col-span-1 border border-gray-100">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Sebaran Kategori</h3>
                 <div class="space-y-4">
                     @foreach($per_kategori as $data)
                         <div>

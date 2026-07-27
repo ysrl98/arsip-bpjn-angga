@@ -17,7 +17,7 @@ class UserCreate extends Component
             'nip' => 'required|unique:users,nip',
             'nama_lengkap' => 'required',
             'password' => 'required|min:6',
-            'role' => 'required|in:admin,user',
+            'role' => 'required|in:admin,user,pimpinan',
         ]);
 
         User::create([

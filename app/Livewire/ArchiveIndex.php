@@ -123,7 +123,7 @@ class ArchiveIndex extends Component
         // === LOGIKA HYBRID (RECOMMENDED) ===
         
         // Jika User BUKAN Admin...
-        if (auth()->user()->role !== 'admin') {
+        if (!in_array(auth()->user()->role, ['admin', 'pimpinan'])) {
             
             // Cek Kategori:
             // Jika sedang membuka menu 'kepegawaian', aktifkan Mode Privat

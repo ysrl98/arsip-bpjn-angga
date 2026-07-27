@@ -29,7 +29,11 @@
     <table class="header">
         <tr>
             <td width="15%" class="text-center">
-                <img src="{{ public_path('images/logo.png') }}" class="logo">
+                @php
+                    $logoPath = public_path('images/logo.png');
+                    $logoBase64 = file_exists($logoPath) ? 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath)) : '';
+                @endphp
+                <img src="{{ $logoBase64 }}" class="logo">
             </td>
             <td width="85%" class="text-center">
                 <div class="instansi-utama">KEMENTERIAN PEKERJAAN UMUM DAN PERUMAHAN RAKYAT</div>

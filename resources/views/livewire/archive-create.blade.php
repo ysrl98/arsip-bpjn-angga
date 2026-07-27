@@ -52,8 +52,9 @@
                     @endif
 
                     <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700">Upload File</label>
-                        <input type="file" wire:model="file_arsip" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        <label class="block text-sm font-medium text-gray-700">Upload File (Bisa Pilih Lebih dari 1 Struk/Nota)</label>
+                        <input type="file" wire:model="file_arsip" multiple class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        @error('file_arsip.*') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         @error('file_arsip') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         <div wire:loading wire:target="file_arsip" class="text-sm text-blue-500 mt-1">Mengupload...</div>
                     </div>

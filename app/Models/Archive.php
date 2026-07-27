@@ -24,6 +24,12 @@ class Archive extends Model
         'tahun_anggaran',
         'status',        // BARU
         'catatan_admin', // BARU
+        'file_hash',     // BARU (Untuk Digital Signature/Integritas)
+        'attachments',   // BARU (Multiple Files Array)
+    ];
+
+    protected $casts = [
+        'attachments' => 'array',
     ];
 
     // Relasi: Setiap arsip milik satu User (Uploader)

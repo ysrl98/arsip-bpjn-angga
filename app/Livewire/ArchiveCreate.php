@@ -19,7 +19,7 @@ class ArchiveCreate extends Component
     public $nama_dokumen;
     public $tanggal_dokumen;
     public $deskripsi;
-    public $file_arsip; 
+    public $file_arsip = []; // Diubah jadi array
 
     // Form Khusus
     public $nominal;
@@ -40,7 +40,8 @@ class ArchiveCreate extends Component
             'nomor_dokumen' => 'required|string|max:255',
             'nama_dokumen' => 'required|string|max:255',
             'tanggal_dokumen' => 'required|date',
-            'file_arsip' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120', 
+            'file_arsip' => 'required|array|min:1',
+            'file_arsip.*' => 'file|mimes:pdf,jpg,jpeg,png|max:5120', 
         ];
 
         if ($this->kategori == 'pembayaran') {
@@ -53,7 +54,11 @@ class ArchiveCreate extends Component
 
         $this->validate($rules);
 
-        $path = $this->file_arsip->store('arsip/' . $this->kategori, 'public');
+        // Menyimpan multi file
+        $paths = [];
+        foreach ($this->file_arsip as $file) {
+            $paths[] = $file->store('arsip/' . $this->kategori, 'public');
+        }
 
         Archive::create([
             'user_id' => Auth::id(),
@@ -62,7 +67,8 @@ class ArchiveCreate extends Component
             'nama_dokumen' => $this->nama_dokumen,
             'tanggal_dokumen' => $this->tanggal_dokumen,
             'deskripsi' => $this->deskripsi,
-            'file_path' => $path,
+            'file_path' => $paths[0], // Ambil path pertama sebagai main file
+            'attachments' => $paths,  // Simpan seluruh array path di attachments
             'nominal' => $this->nominal,
             'penerima' => $this->penerima,
             'lokasi_tujuan' => $this->lokasi_tujuan,

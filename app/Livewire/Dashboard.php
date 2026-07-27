@@ -39,12 +39,21 @@ class Dashboard extends Component
             'total_arsip' => $query->count(),
             
             // Total Pegawai (Tidak kena filter tahun, karena pegawai tetap)
-            'total_pegawai' => User::where('role', 'user')->count(),
+            'total_pegawai' => User::whereIn('role', ['user', 'pimpinan'])->count(),
 
             // Arsip Baru (Khusus Bulan Ini di Tahun Terpilih)
             'arsip_bulan_ini' => Archive::whereMonth('created_at', date('m'))
                                 ->whereYear('created_at', date('Y')) // Tetap tahun berjalan
                                 ->count(),
+            
+            // Data untuk Grafik Batang (Per Bulan)
+            'chart_data' => collect(range(1, 12))->map(function($month) use ($query) {
+                $q = Archive::whereMonth('tanggal_dokumen', $month);
+                if ($this->tahun != 'semua') {
+                    $q->whereYear('tanggal_dokumen', $this->tahun);
+                }
+                return $q->count();
+            })->toArray(),
             
             'per_kategori' => $per_kategori,
 

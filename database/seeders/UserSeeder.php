@@ -54,5 +54,19 @@ class UserSeeder extends Seeder
             'unit_kerja' => 'Subbag Umum',
             'status_kepegawaian' => 'Honorer/PPNPN',
         ]);
+        
+        // 4. Akun PIMPINAN
+         User::create([
+            'nip' => '197001011995031002', 
+            'password' => Hash::make('password123'),
+            'nama_lengkap' => 'Ir. Pimpinan Tertinggi, M.T.',
+            'role' => 'pimpinan',
+            'email' => 'pimpinan@bpjn.go.id',
+            'no_hp' => '08111111111',
+            'pangkat_golongan' => 'Pembina Utama (IV/e)',
+            'jabatan' => 'Kepala Balai',
+            'unit_kerja' => 'BPJN',
+            'status_kepegawaian' => 'PNS',
+        ]);
     }
 }

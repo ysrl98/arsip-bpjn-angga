@@ -151,7 +151,7 @@
                                     
                                     <div class="flex items-center gap-1 bg-gray-50 p-1 rounded-lg border border-gray-100">
                                         
-                                        <a href="{{ asset('storage/' . $archive->file_path) }}" target="_blank" 
+                                        <a href="{{ route('dokumen.download', $archive->id) }}" target="_blank" 
                                         class="p-1.5 text-blue-600 hover:bg-blue-100 rounded-md transition" title="Lihat Dokumen">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                         </a>
@@ -172,30 +172,7 @@
                                         @endif
                                     </div>
 
-                                    @if(auth()->user()->role == 'admin')
-                                        
-                                        <div class="w-px h-6 bg-gray-300 mx-1"></div>
 
-                                        <div class="flex items-center gap-1">
-                                            @if($archive->status == 'pending')
-                                                <button wire:click="approve({{ $archive->id }})" 
-                                                        class="p-1.5 text-green-600 bg-green-50 hover:bg-green-200 border border-green-200 rounded-md transition shadow-sm" title="Setujui">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                                </button>
-                                                <button wire:click="reject({{ $archive->id }})" 
-                                                        wire:confirm="Tolak dokumen ini?"
-                                                        class="p-1.5 text-red-600 bg-red-50 hover:bg-red-200 border border-red-200 rounded-md transition shadow-sm" title="Tolak">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                </button>
-                                            @endif
-
-                                            @if($archive->status == 'valid')
-                                                <span class="p-1.5 text-green-500 bg-green-50 rounded-full border border-green-100" title="Terverifikasi Aman">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                </span>
-                                            @endif
-                                        </div>
-                                    @endif
 
                                 </div>
                             </td>
