@@ -31,26 +31,48 @@ class ArchiveIndex extends Component
         }
 
     
-    
     public function delete($id)
     {
         // 1. Cari data arsip berdasarkan ID
         $archive = Archive::find($id);
 
         if ($archive) {
+            $user = auth()->user();
+            
+            // CEK HAK AKSES HAPUS
+            // Admin boleh hapus apa saja
+            // User biasa HANYA boleh hapus miliknya sendiri DAN statusnya bukan valid
+            $isAdmin = $user->role === 'admin';
+            $isOwner = $user->id === $archive->user_id;
+            $canDeleteOwner = $isOwner && in_array($archive->status, ['pending', 'rejected', null]);
+            
+            if (!$isAdmin && !$canDeleteOwner) {
+                session()->flash('error', 'Anda tidak memiliki hak akses untuk menghapus dokumen ini.');
+                return;
+            }
+
             $judul = $archive->nama_dokumen;
             // 2. Hapus File Fisik (PDF/Gambar) dari Folder Storage
             if ($archive->file_path && Storage::disk('public')->exists($archive->file_path)) {
                 Storage::disk('public')->delete($archive->file_path);
             }
 
+            // Hapus attachments jika ada
+            if (is_array($archive->attachments)) {
+                foreach ($archive->attachments as $att) {
+                    if (Storage::disk('public')->exists($att)) {
+                        Storage::disk('public')->delete($att);
+                    }
+                }
+            }
+
             // 3. Hapus Data dari Database
             $archive->delete();
 
             \App\Models\ActivityLog::create([
-                'user_id' => auth()->id(),
+                'user_id' => $user->id,
                 'action' => 'DELETE',
-                'description' => 'Menghapus arsip permanen: ' . $judul,
+                'description' => 'Menghapus arsip: ' . $judul,
                 'ip_address' => request()->ip()
             ]);
 
@@ -60,43 +82,7 @@ class ArchiveIndex extends Component
     }
     // ----------------------------
     
-    public function approve($id)
-    {
-        // Hanya Admin yang boleh
-        if(auth()->user()->role !== 'admin') { return; }
-
-        $archive = Archive::find($id);
-        if ($archive) {
-            $archive->update(['status' => 'valid']);
-            // ... setelah update status ...
-            \App\Models\ActivityLog::create([
-                'user_id' => auth()->id(),
-                'action' => 'VERIFIKASI',
-                'description' => 'Menyetujui (Approve) arsip ID: ' . $id,
-                'ip_address' => request()->ip()
-            ]);
-            session()->flash('message', 'Dokumen berhasil diverifikasi (Valid).');
-        }
-    }
-
-    // FUNGSI 2: TOLAK DOKUMEN
-    public function reject($id)
-    {
-        if(auth()->user()->role !== 'admin') { return; }
-
-        $archive = Archive::find($id);
-        if ($archive) {
-            $archive->update(['status' => 'rejected']);
-            // ... setelah update status ...
-            \App\Models\ActivityLog::create([
-                'user_id' => auth()->id(),
-                'action' => 'TOLAK',
-                'description' => 'Menolak arsip ID: ' . $id,
-                'ip_address' => request()->ip()
-            ]);
-            session()->flash('message', 'Dokumen ditandai sebagai Ditolak/Salah.');
-        }
-    }
+    // Method approve dan reject telah dihapus karena sudah dikelola khusus oleh pimpinan di ApprovalBoard.
 
     public function updatedSearch()
     {
@@ -159,6 +145,9 @@ class ArchiveIndex extends Component
 
     public function exportExcel()
     {
+        if (!in_array(auth()->user()->role, ['admin', 'pimpinan'])) {
+            abort(403, 'Akses ditolak.');
+        }
         // Nama file otomatis: arsip-pembayaran-2026.xlsx
         $namaFile = 'arsip-' . $this->kategori . '-' . date('Y-m-d-His') . '.xlsx';
 
@@ -170,6 +159,9 @@ class ArchiveIndex extends Component
 
     public function exportPdf()
     {
+        if (!in_array(auth()->user()->role, ['admin', 'pimpinan'])) {
+            abort(403, 'Akses ditolak.');
+        }
         // 1. Ambil Data (Query sama persis dengan Filter di Render)
         $query = Archive::where('kategori', $this->kategori);
 

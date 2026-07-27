@@ -14,10 +14,16 @@ class DocumentDownloadController extends Controller
     {
         $archive = Archive::findOrFail($id);
 
-        // Hanya izinkan jika user adalah admin, pimpinan, atau pengupload
         $user = auth()->user();
-        if (!in_array($user->role, ['admin', 'pimpinan']) && $user->id !== $archive->user_id) {
-            abort(403, 'Anda tidak memiliki akses untuk mengunduh dokumen ini.');
+        // Cek kategori. Jika kepegawaian (Privat), maka user biasa tidak boleh download milik orang lain.
+        $isPrivate = $archive->kategori === 'kepegawaian';
+        $isAdminOrPimpinan = in_array($user->role, ['admin', 'pimpinan']);
+        $isOwner = $user->id === $archive->user_id;
+
+        if (!$isAdminOrPimpinan) {
+            if ($isPrivate && !$isOwner) {
+                abort(403, 'Anda tidak memiliki akses untuk mengunduh dokumen kepegawaian milik pegawai lain.');
+            }
         }
 
         $filePath = $archive->file_path;

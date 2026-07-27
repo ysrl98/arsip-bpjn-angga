@@ -8,6 +8,7 @@
             
             <div class="flex gap-2">
     
+                @if(in_array(auth()->user()->role, ['admin', 'pimpinan']))
                 <div x-data="{ open: false }" class="relative">
                     
                     <button @click="open = !open" @click.outside="open = false" 
@@ -40,6 +41,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
                 <a href="{{ route('arsip.create', $kategori) }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md flex items-center transition">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                     Tambah
@@ -163,7 +165,10 @@
                                             </a>
                                         @endif
 
-                                        @if(auth()->user()->role == 'admin' || auth()->id() == $archive->user_id)
+                                        @php
+                                            $canDelete = (auth()->user()->role === 'admin') || (auth()->id() == $archive->user_id && in_array($archive->status, ['pending', 'rejected', null]));
+                                        @endphp
+                                        @if($canDelete)
                                             <button wire:click="delete({{ $archive->id }})"
                                                     wire:confirm="Yakin ingin menghapus arsip ini?"
                                                     class="p-1.5 text-red-600 hover:bg-red-100 rounded-md transition" title="Hapus Arsip">
