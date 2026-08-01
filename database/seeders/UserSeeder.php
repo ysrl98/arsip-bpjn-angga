@@ -29,7 +29,7 @@ class UserSeeder extends Seeder
 
         // 2. Akun USER (Pegawai Biasa)
         User::create([
-            'nip' => '199505202020121005', 
+            'nip' => '1', 
             'password' => Hash::make('password123'),
             'nama_lengkap' => 'Budi Santoso, S.T.',
             'role' => 'user',
